@@ -26,6 +26,8 @@ release
 build
 example/auth0.js
 
+example/taskomat.config.js
+
 .gitignore
 coverage
 test-results.xml
