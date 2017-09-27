@@ -155,6 +155,7 @@
         <input type="button" class="login-hosted" value="Hosted login page" />
         <input type="button" class="login-facebook" value="Facebook" />
         <input type="button" class="login-twitter" value="Twitter" />
+        <input type="button" class="login-google" value="Google" />
         <input type="button" class="login-github" value="Github" />
       </div>
 
@@ -163,6 +164,7 @@
         <input type="button" class="popup-login-hosted" value="Hosted login page" />
         <input type="button" class="popup-login-facebook" value="Facebook" />
         <input type="button" class="popup-login-twitter" value="Twitter" />
+        <input type="button" class="popup-login-google" value="Google" />
         <input type="button" class="popup-login-github" value="Github" />
       </div>
 
@@ -201,9 +203,9 @@
     });
 
     var webAuth = new auth0.WebAuth({
-      domain: 'brucke.auth0.com',
+      domain: '<!!!-- INSERT AUTH0 CLIENT DOMAIN --!!!>',
       redirectUri: 'https://localhost:3000/example',
-      clientID: 'k5u3o2fiAA8XweXEEX604KCwCjzjtMU6',
+      clientID: '<!!!-- INSERT AUTH0 CLIENT ID --!!!>',
       responseType: 'id_token token',
       plugins: [
         new CordovaAuth0Plugin()
@@ -249,7 +251,7 @@
     $('.login-db').click(function (e) {
       e.preventDefault();
       webAuth.redirect.loginWithCredentials({
-        connection: 'acme',
+        connection: 'Username-Password-Authentication',
         username: $('.login-username').val(),
         password: $('.login-password').val(),
         scope: 'openid'
@@ -322,6 +324,11 @@
       webAuth.authorize({ connection: 'twitter' });
     });
 
+    $('.login-google').click(function (e) {
+      e.preventDefault();
+      webAuth.authorize({ connection: 'google-oauth2' });
+    });
+
     $('.login-github').click(function (e) {
       e.preventDefault();
       webAuth.authorize({ connection: 'github' });
@@ -337,6 +344,11 @@
       webAuth.popup.authorize({
         redirectURI: 'https://localhost:3000/example/callback_popup.html'
       }, htmlConsole.dumpCallback.bind(htmlConsole));
+    });
+
+    $('.popup-login-google').click(function (e) {
+      e.preventDefault();
+      webAuth.popup.authorize({ connection: 'google-oauth2' }, htmlConsole.dumpCallback.bind(htmlConsole));
     });
 
     $('.popup-login-twitter').click(function (e) {
