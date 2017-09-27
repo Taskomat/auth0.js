@@ -8,6 +8,7 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="/auth0.js"></script>
   <script src="/cordova-auth0-plugin.js"></script>
+  <script src="taskomat.config.js"></script>
 
   <style>
     .row {
@@ -117,6 +118,13 @@
     <div class="col-xs-6">
 
       <div>
+        <h2>Signup Database Connection</h2>
+        <input class="signup-email" />
+        <input type="password" class="signup-password" />
+        <input type="button" class="signup-db" value="Signup!" />
+    </div>
+
+      <div>
         <h2>Login with database connection:</h2>
         <input class="login-username" value="johnfoo@gmail.com" />
         <input class="login-password" value="1234" />
@@ -203,9 +211,9 @@
     });
 
     var webAuth = new auth0.WebAuth({
-      domain: '<!!!-- INSERT AUTH0 CLIENT DOMAIN --!!!>',
-      redirectUri: 'https://localhost:3000/example',
-      clientID: '<!!!-- INSERT AUTH0 CLIENT ID --!!!>',
+      domain: TASKOMAT_AUTH0.domain,
+      redirectUri: 'https://localhost:3000/example/',
+      clientID: TASKOMAT_AUTH0.clientID,
       responseType: 'id_token token',
       plugins: [
         new CordovaAuth0Plugin()
@@ -234,6 +242,31 @@
       }
 
       window.location.hash = '';
+    });
+
+    $('.signup-db').click(function (e) {
+        const connection = 'Username-Password-Authentication'
+        const email = $('.signup-email').val();
+        const password = $('.signup-password').val();
+        e.preventDefault();
+        webAuth.signup({
+            connection,
+            email,
+            password
+        }, function (err) {
+            htmlConsole.dumpCallback.bind(htmlConsole);
+
+            if (err) {
+                console.log(`Error occured: code "${err.code}", description: "${err.description}"`)
+            } else {
+                webAuth.redirect.loginWithCredentials({
+                  connection,
+                  username: email,
+                  password,
+                  scope: 'openid'
+                }, htmlConsole.dumpCallback.bind(htmlConsole));
+            }
+        });
     });
 
     $('#clear-console').click(function () {
@@ -287,7 +320,7 @@
       e.preventDefault();
 
       webAuth.popup.loginWithCredentials({
-        connection: 'acme',
+        connection: 'Username-Password-Authentication',
         username: $('.popup-login-username').val(),
         password: $('.popup-login-password').val(),
         scope: 'openid',
@@ -298,7 +331,7 @@
     $('.client-login-db').click(function (e) {
       e.preventDefault();
       webAuth.client.login({
-        realm: 'acme',
+        realm: 'Username-Password-Authentication',
         username: $('.client-login-username').val(),
         password: $('.client-login-password').val(),
         scope: 'openid profile',
